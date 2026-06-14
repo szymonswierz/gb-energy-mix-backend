@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "https://gb-energy-mix-frontend.onrender.com"})
 public class EnergyMixController {
 
     private final NesoService nesoService;
