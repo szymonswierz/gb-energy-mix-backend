@@ -7,7 +7,11 @@ The application fetches electricity generation mix data from an external API, ca
 ## Features
 
 * Fetches Great Britain electricity generation mix data from an external API
-* Calculates average daily energy mix for three days: today, tomorrow and the day after tomorrow
+* Calculates average daily energy mix for three days:
+
+  * today
+  * tomorrow
+  * the day after tomorrow
 * Calculates the share of clean energy sources:
 
   * biomass
@@ -19,6 +23,7 @@ The application fetches electricity generation mix data from an external API, ca
 * Supports charging durations from 1 to 6 full hours
 * Allows the optimal charging window to start on one day and end on the next
 * Provides REST API endpoints for the frontend application
+* Handles invalid input, insufficient data and external API errors
 * Includes unit tests for service logic and error handling
 
 ## Tech Stack
@@ -31,6 +36,20 @@ The application fetches electricity generation mix data from an external API, ca
 * JUnit 5
 * Mockito
 * Docker
+
+## Clean Energy Sources
+
+The application treats the following sources as clean energy:
+
+```text
+biomass
+nuclear
+hydro
+solar
+wind
+```
+
+These sources are used to calculate the clean energy percentage for both the daily energy mix and the optimal EV charging window.
 
 ## API Endpoints
 
@@ -50,15 +69,127 @@ Example response:
     "date": "2026-06-14",
     "energySourcePercentages": [
       {
-        "fuel": "wind",
-        "percentage": 24.94
+        "fuel": "biomass",
+        "percentage": 5.45208333333333
+      },
+      {
+        "fuel": "coal",
+        "percentage": 0
+      },
+      {
+        "fuel": "imports",
+        "percentage": 19.7145833333333
+      },
+      {
+        "fuel": "gas",
+        "percentage": 21.7541666666667
+      },
+      {
+        "fuel": "nuclear",
+        "percentage": 11.74375
+      },
+      {
+        "fuel": "other",
+        "percentage": 0.502083333333333
+      },
+      {
+        "fuel": "hydro",
+        "percentage": 0.222916666666667
       },
       {
         "fuel": "solar",
-        "percentage": 14.94
+        "percentage": 15.6791666666667
+      },
+      {
+        "fuel": "wind",
+        "percentage": 24.9270833333333
       }
     ],
-    "cleanEnergyPercentage": 57.11
+    "cleanEnergyPercentage": 58.025
+  },
+  {
+    "date": "2026-06-15",
+    "energySourcePercentages": [
+      {
+        "fuel": "biomass",
+        "percentage": 8.47291666666667
+      },
+      {
+        "fuel": "coal",
+        "percentage": 0
+      },
+      {
+        "fuel": "imports",
+        "percentage": 18.6208333333333
+      },
+      {
+        "fuel": "gas",
+        "percentage": 29.4104166666667
+      },
+      {
+        "fuel": "nuclear",
+        "percentage": 10.03125
+      },
+      {
+        "fuel": "other",
+        "percentage": 0
+      },
+      {
+        "fuel": "hydro",
+        "percentage": 0
+      },
+      {
+        "fuel": "solar",
+        "percentage": 15.9145833333333
+      },
+      {
+        "fuel": "wind",
+        "percentage": 17.5395833333333
+      }
+    ],
+    "cleanEnergyPercentage": 51.9583333333333
+  },
+  {
+    "date": "2026-06-16",
+    "energySourcePercentages": [
+      {
+        "fuel": "biomass",
+        "percentage": 8.82380952380952
+      },
+      {
+        "fuel": "coal",
+        "percentage": 0
+      },
+      {
+        "fuel": "imports",
+        "percentage": 18.4952380952381
+      },
+      {
+        "fuel": "gas",
+        "percentage": 28.6809523809524
+      },
+      {
+        "fuel": "nuclear",
+        "percentage": 9.43809523809524
+      },
+      {
+        "fuel": "other",
+        "percentage": 0
+      },
+      {
+        "fuel": "hydro",
+        "percentage": 0
+      },
+      {
+        "fuel": "solar",
+        "percentage": 9.67142857142857
+      },
+      {
+        "fuel": "wind",
+        "percentage": 24.8952380952381
+      }
+    ],
+    "cleanEnergyPercentage": 52.8285714285714
   }
 ]
 ```
@@ -69,9 +200,11 @@ Example response:
 GET /api/v1/optimal-charging-window/{hours}
 ```
 
-Returns the best charging window for the selected number of full hours.
+Returns the best EV charging window for the selected number of full hours.
 
-Example:
+The `hours` path variable must be a full number between 1 and 6.
+
+Example request:
 
 ```http
 GET /api/v1/optimal-charging-window/3
@@ -83,7 +216,7 @@ Example response:
 {
   "from": "2026-06-14T10:30Z",
   "to": "2026-06-14T13:30Z",
-  "averageCleanEnergyPercentage": 68.98
+  "averageCleanEnergyPercentage": 68.9833333333333
 }
 ```
 
@@ -91,7 +224,7 @@ Times are returned in UTC.
 
 ## Error Handling
 
-The backend returns structured error responses for invalid input, missing data and external API issues.
+The backend returns structured error responses for invalid input, insufficient data and external API issues.
 
 Example error response:
 
