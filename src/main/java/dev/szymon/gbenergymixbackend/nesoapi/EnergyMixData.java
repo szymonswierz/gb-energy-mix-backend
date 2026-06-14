@@ -1,0 +1,20 @@
+package dev.szymon.gbenergymixbackend.nesoapi;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class EnergyMixData {
+
+    private String from;
+    private String to;
+    private List<GenerationMix> generationmix;
+
+}
